@@ -11,8 +11,7 @@ function ns.Debug(...) if debugf then debugf:AddMessage(string.join(", ", tostri
 function ns.GetUnitClassInfo(unitName)
 	local class, classFilename = select(2,UnitClass(unitName))
 	if class == nil then
-		local numGuildMembers = GetNumGuildMembers()
-		for i = 1,numGuildMembers do
+		for i = 1,GetNumGuildMembers(true) do
 			local name, _, _, level, _class, _, _, _, online, _, _classFileName = GetGuildRosterInfo(i)
 			if name == unitName then
 				class = _class
