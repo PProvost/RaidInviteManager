@@ -1,12 +1,13 @@
 
 local myname, ns = ...
 
-local scroll
+local scrollBar
 local OnValueChanged
+local firstshow = true
 
 local rows = {}
 local NUMROWS = 22
-local SCROLLSTEP = math.floor(NUMROWS/3)
+local SCROLLSTEP = math.floor(NUMROWS/4)
 
 local contextMenu
 local CONTEXT_MENU_MODE_NAME = "Name"
@@ -18,7 +19,7 @@ local function SetRaidMemberNote(note)
 end
 
 local function RefreshList()
-	OnValueChanged(scroll, 0)
+	OnValueChanged(scrollBar, 0)
 end
 
 StaticPopupDialogs["RAIDINVITEMANAGER_SET_NOTE"] = {
@@ -162,6 +163,7 @@ function OnValueChanged(self, offset, ...)
 			row.note = note
 			row.index = index
 			row:SetChecked(selected)
+			if selected then row.check:Show() else row.check:Hide() end
 			row:Show()
 
 		else
@@ -171,6 +173,7 @@ function OnValueChanged(self, offset, ...)
 			row.role:SetText()
 			row.note = nil
 			row:SetChecked(false)
+			row.check:Hide()
 			row.index = nil
 			row:Hide()
 		end
@@ -181,10 +184,10 @@ function ns.CreateManagePage(parent)
 	local scrollbox = CreateFrame("Frame", nil, parent)
 	scrollbox:SetPoint("TOPLEFT", -14, -5)
 	scrollbox:SetPoint("BOTTOMRIGHT", -5, 35)
-	scroll = LibStub("tekKonfig-Scroll").new(scrollbox, 0, SCROLLSTEP)
+	scrollBar = LibStub("tekKonfig-Scroll").new(scrollbox, 0, SCROLLSTEP)
 
 	local lastbutt
-	local function OnMouseWheel(self, val) scroll:SetValue(scroll:GetValue() - val*SCROLLSTEP) end
+	local function OnMouseWheel(self, val) scrollBar:SetValue(scrollBar:GetValue() - val*SCROLLSTEP) end
 	for i=1,NUMROWS do
 		local butt = CreateFrame("CheckButton", nil, parent)
 		butt:SetWidth(318) butt:SetHeight(16)
@@ -255,13 +258,12 @@ function ns.CreateManagePage(parent)
 		lastbutt = butt
 	end
 
-	orig_OnValueChanged = scroll:GetScript("OnValueChanged")
-	scroll:SetScript("OnValueChanged", OnValueChanged)
+	orig_OnValueChanged = scrollBar:GetScript("OnValueChanged")
+	scrollBar:SetScript("OnValueChanged", OnValueChanged)
 
-	local firstshow = true
 	parent:SetScript("OnShow", function(self)
-		scroll:SetMinMaxValues(0, math.max(0, i))
-		if firstshow then scroll:SetValue(0); firstshow = nil end
+		scrollBar:SetMinMaxValues(0, math.max(0, i))
+		if firstshow then scrollBar:SetValue(0); firstshow = nil end
 	end)
 
 	local sep1 = parent:CreateTexture()
@@ -301,6 +303,8 @@ function ns.CreateManagePage(parent)
 
 	local inviteButton = LibStub("tekKonfig-Button").new(parent, "BOTTOMRIGHT", parent, "TOPRIGHT", 0, 5)
 	inviteButton:SetText("Begin Invites")
+	inviteButton:SetScript("OnClick", function()
+	end)
 
 	InitializeContextMenu(parent)
 

@@ -18,6 +18,7 @@ libs\tekKonfigAboutPanel.lua
 libs\tekKonfigButton.lua
 libs\tekKonfigScroll.lua
 libs\tekPanel.lua
+libs\QScrollingEditBox.lua
 
 Locale.lua
 Database.lua
