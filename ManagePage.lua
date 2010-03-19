@@ -182,8 +182,8 @@ end
 
 function ns.CreateManagePage(parent)
 	local scrollbox = CreateFrame("Frame", nil, parent)
-	scrollbox:SetPoint("TOPLEFT", -14, -5)
-	scrollbox:SetPoint("BOTTOMRIGHT", -5, 35)
+	scrollbox:SetPoint("TOPLEFT", -14, -6)
+	scrollbox:SetPoint("BOTTOMRIGHT", -5, 65)
 	scrollBar = LibStub("tekKonfig-Scroll").new(scrollbox, 0, SCROLLSTEP)
 
 	local lastbutt
@@ -266,48 +266,55 @@ function ns.CreateManagePage(parent)
 		if firstshow then scrollBar:SetValue(0); firstshow = nil end
 	end)
 
-	local sep1 = parent:CreateTexture()
-	sep1:SetTexture(0.25, 0.25, 0.25, 1.0)
-	sep1:SetPoint("TOP", scrollbox, "BOTTOM", 0, -5)
-	sep1:SetPoint("LEFT", parent, "LEFT", 10)
-	sep1:SetPoint("RIGHT", parent, "RIGHT", -10)
-	sep1:SetHeight(3)
-
 	local editBox = CreateFrame("EditBox", nil, parent, "InputBoxTemplate")
 	editBox:SetAutoFocus(false)
 	editBox:SetFontObject(ChatFontSmall)
-	editBox:SetPoint("BOTTOMLEFT", parent, "BOTTOMLEFT", 5, 5)
-	editBox:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", -60, 5)
+	editBox:SetPoint("TOPLEFT", scrollbox, "BOTTOMLEFT", 23, -5)
+	editBox:SetPoint("TOPRIGHT", scrollbox, "BOTTOMRIGHT", -48, -5)
 	editBox:SetScript("OnEscapePressed", editBox.ClearFocus)
 	editBox:SetHeight(24)
 
-	local addButton = LibStub("tekKonfig-Button").new_small(parent, "BOTTOMRIGHT", -5, 5)
+	local addButton = LibStub("tekKonfig-Button").new_small(parent, "LEFT", editBox, "RIGHT", 5)
 	addButton:SetText("Add")
 	addButton:SetWidth(50)
 	addButton:SetHeight(24)
 
 	local addName = function()
 		local name = editBox:GetText()
-			local t = {
-				name = name,
-				class = ns.GetUnitClassInfo(name) or "Unknown",
-				role = ns.GetRole(name) or "Not specified",
-			}
-			table.insert(ns.raidMembers, t)
-			RefreshList()
-			editBox:SetText("")
+		local t = {
+			name = name,
+			class = ns.GetUnitClassInfo(name) or "Unknown",
+			role = ns.GetRole(name) or "Not specified",
+		}
+		table.insert(ns.raidMembers, t)
+		RefreshList()
+		editBox:SetText("")
 	end
 
 	addButton:SetScript("OnClick", addName)
 	editBox:SetScript("OnEnterPressed", addName)
 
-	local inviteButton = LibStub("tekKonfig-Button").new(parent, "BOTTOMRIGHT", parent, "TOPRIGHT", 0, 5)
+	local sep1 = parent:CreateTexture()
+	sep1:SetTexture(0.25, 0.25, 0.25, 1.0)
+	sep1:SetPoint("TOP", editBox, "BOTTOM", 0, -5)
+	sep1:SetPoint("LEFT", parent, "LEFT", 10)
+	sep1:SetPoint("RIGHT", parent, "RIGHT", -10)
+	sep1:SetHeight(3)
+
+	local inviteButton = LibStub("tekKonfig-Button").new(parent, "BOTTOMLEFT", parent, "BOTTOM", 3, 5)
+	inviteButton:SetWidth(100)
 	inviteButton:SetText("Begin Invites")
-	inviteButton:SetScript("OnClick", function()
+	
+	local clearButton = LibStub("tekKonfig-Button").new(parent, "BOTTOMRIGHT", parent, "BOTTOM", -3, 5)
+	clearButton:SetWidth(100)
+	clearButton:SetText("Clear")
+	clearButton:SetScript("OnClick", function()
+		ns.raidMembers = {}
+		RefreshList()
 	end)
 
-	InitializeContextMenu(parent)
 
+	InitializeContextMenu(parent)
 end
 
 
