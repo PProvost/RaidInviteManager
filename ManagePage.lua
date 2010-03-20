@@ -58,7 +58,7 @@ StaticPopupDialogs["RAIDINVITEMANAGER_SET_NOTE"] = {
 
 local function menuCallback(frame, level)
 	local info
-	local roles = { "Tank", "Healer", "Melee", "Ranged", "Not specified" }
+	local roles = { "Tank", "Healer", "Melee", "Ranged", "Standby" }
 	local classes = CLASS_SORT_ORDER -- from FrameXML/Constants.lua
 
 	if contextMenu.mode == CONTEXT_MENU_MODE_ROLE  then
@@ -186,6 +186,8 @@ function ns.CreateManagePage(parent)
 	scrollbox:SetPoint("BOTTOMRIGHT", -5, 65)
 	scrollBar = LibStub("tekKonfig-Scroll").new(scrollbox, 0, SCROLLSTEP)
 
+	scrollbox:SetScript("OnShow", RefreshList)
+
 	local lastbutt
 	local function OnMouseWheel(self, val) scrollBar:SetValue(scrollBar:GetValue() - val*SCROLLSTEP) end
 	for i=1,NUMROWS do
@@ -284,7 +286,7 @@ function ns.CreateManagePage(parent)
 		local t = {
 			name = name,
 			class = ns.GetUnitClassInfo(name) or "Unknown",
-			role = ns.GetRole(name) or "Not specified",
+			role = ns.GetRole(name) or "Standby",
 		}
 		table.insert(ns.raidMembers, t)
 		RefreshList()

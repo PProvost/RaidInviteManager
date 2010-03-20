@@ -1,6 +1,16 @@
 
 local myname, ns = ...
 
+-- Will return "Standby" for any value not listed
+local roles = setmetatable({
+	["TANKS"] = "Tank",
+	["TANK"] = "Tank",
+	["MELEE"] = "Melee",
+	["RANGED"] = "Ranged",
+	["HEALER"] = "Healer",
+	["HEALERS"] = "Healer",
+}, { __index = function(t,k) return rawget(t,k) or "Standby" end })
+
 function ns.CreateImportPage(parent)
 	local instructionsText = parent:CreateFontString()
 	instructionsText:SetFontObject(GameFontNormalSmall)
@@ -31,6 +41,31 @@ function ns.CreateImportPage(parent)
 
 	local importButton = LibStub("tekKonfig-Button").new(parent, "BOTTOMRIGHT", -5, 5)
 	importButton:SetText("Import")
+	importButton:SetScript("OnClick", function()
+		ns.raidMembers = {}
+		local text = scrollEdit:GetText()
+		local lines = { string.split("\n", text) }
+		local role = "Standby"
+		for i,line in ipairs(lines) do
+			line = strtrim(line)
+			if string.sub(line, 1, 1) == "#" then
+				-- special line
+				local directive = string.upper(string.match(line, "#%s*(%w+)"))
+				role = roles[directive]
+			else
+				-- assume it is a name
+				local name = string.match(line, "%w+")
+				if name then
+					table.insert( ns.raidMembers, {
+						name = name,
+						role = role,
+						class = ns.GetUnitClassInfo(name) or "Unknown"
+					})
+				end
+			end
+		end
+	end)
+
 
 end
 
