@@ -20,25 +20,25 @@ To make it even easier, you can organize the content in this tab so the Import w
 
 Sample import:
 
- # Tanks
+ &#35; Tanks
  Datank
  Brownbear
 
- # Healers
+ &#35; Healers
  Holylight   # May need to leave early
  Palladinn
  Treeftw
 
- # Melee
+ &#35; Melee
  Pokeystabby
  Slashandburn
 
- # Ranged
+ &#35; Ranged
  Nukernuker
  Backoffdude
  Dotemup
 
- # Standby
+ &#35; Standby
  Onthabench
  Sittingitout
 
