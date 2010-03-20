@@ -4,7 +4,7 @@ local myname, ns = ...
 local mainFrame = nil
 local pages = {}
 
-local function SetActivePage(index)
+function ns.SetActivePage(index)
 	assert(mainFrame ~= nil)
 	for i = 1,#pages do
 		if i == index then
@@ -31,7 +31,7 @@ local function CreateMainFrame()
 	local tab1Button = CreateFrame("Button", "RaidInviteManagerMainFrameTab1", mainFrame, "CharacterFrameTabButtonTemplate")
 	tab1Button:SetPoint("TOPLEFT", mainFrame, "BOTTOMLEFT", 12, 78)
 	tab1Button:SetText("Manage")
-	tab1Button:SetScript("OnClick", function() SetActivePage(1) end)
+	tab1Button:SetScript("OnClick", function() ns.SetActivePage(1) end)
 
 	-- Page 2
 	local page2 = CreateFrame("Frame", nil, mainFrame)
@@ -43,7 +43,7 @@ local function CreateMainFrame()
 	local tab2Button = CreateFrame("Button", "RaidInviteManagerMainFrameTab2", mainFrame, "CharacterFrameTabButtonTemplate")
 	tab2Button:SetPoint("TOPLEFT", mainFrame, "BOTTOMLEFT", 75, 78)
 	tab2Button:SetText("Import")
-	tab2Button:SetScript("OnClick", function() SetActivePage(2) end)
+	tab2Button:SetScript("OnClick", function() ns.SetActivePage(2) end)
 
 	-- Page 3
 	local page3 = CreateFrame("Frame", nil, mainFrame)
@@ -55,7 +55,7 @@ local function CreateMainFrame()
 	local tab3Button = CreateFrame("Button", "RaidInviteManagerMainFrameTab3", mainFrame, "CharacterFrameTabButtonTemplate")
 	tab3Button:SetPoint("TOPLEFT", mainFrame, "BOTTOMLEFT", 133, 78)
 	tab3Button:SetText("Options")
-	tab3Button:SetScript("OnClick", function() SetActivePage(3) end)
+	tab3Button:SetScript("OnClick", function() ns.SetActivePage(3) end)
 
 	-- Top Page title FontString
 	mainFrame.titleString = mainFrame:CreateFontString()
@@ -64,7 +64,7 @@ local function CreateMainFrame()
 	mainFrame.titleString:SetText("Manage")
 
 	-- Final setup
-	mainFrame:SetScript("OnShow", function() SetActivePage(1) end)
+	mainFrame:SetScript("OnShow", function() ns.SetActivePage(1) end)
 	PanelTemplates_SetNumTabs(mainFrame, #pages);
 end
 

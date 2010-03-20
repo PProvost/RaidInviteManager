@@ -64,6 +64,8 @@ function ns.CreateImportPage(parent)
 				end
 			end
 		end
+
+		ns.SetActivePage(1) -- Switch to the manage page after import
 	end)
 
 
