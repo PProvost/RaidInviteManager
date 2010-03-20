@@ -22,6 +22,79 @@ local function RefreshList()
 	OnValueChanged(scrollBar, 0)
 end
 
+local function IsGuildMember(name)
+	for i = 1, GetNumGuildMembers(true) do
+		if GetGuildRosterInfo(i) == name then return true end
+	end
+end
+
+local function IsGuildMemberOnline(name)
+   local count = GetNumGuildMembers(true)
+   local nom, online
+   for index = 1,count do
+      nom, _, _, _, _, _, _, _, online = GetGuildRosterInfo(index)
+      if name == nom and online == 1 then
+         return 1
+      end
+   end
+end
+
+local function GetSelectedRaidMembers()
+	local result = {}
+	for i=1,#(ns.raidMembers) do
+		if ns.raidMembers[i].selected then
+			table.insert(result, ns.raidMembers[i].name)
+		end
+	end
+	return result
+end
+
+local function DoInviteUnit(name)
+	if UnitIsUnit(name, "player") then return end
+	if IsGuildMember(name) then
+		if IsGuildMemberOnline(name) then
+			InviteUnit(name)
+		else
+			ns.Print("Not online "..name)
+		end
+	else
+		ns.Print("Inviting "..name.." (non guild)")
+		InviteUnit(name)
+	end
+end
+
+local function Invite_OnClick()
+	local approved = GetSelectedRaidMembers()
+	if not UnitInRaid("player") then
+		if GetNumPartyMembers() == 0 then
+			ns:RegisterEvent("PARTY_MEMBERS_CHANGED")
+			for i = 1,4 do
+				local u = table.remove(approved)
+				if u then DoInviteUnit(u) end
+			end
+			return
+		else
+			ConvertToRaid()
+			ns.ScheduleTimer(Invite_OnClick, 2)
+			return
+		end
+	end
+
+	local v = table.remove(approved)
+	while v do
+		DoInviteUnit(v)
+		v = table.remove(approved)
+	end
+end
+
+function ns:PARTY_MEMBERS_CHANGED()
+	if GetNumPartyMembers() > 0 then
+		ConvertToRaid()
+		ns:UnregisterEvent("PARTY_MEMBERS_CHANGED")
+		ns:ScheduleTimer(Invite_OnClick, 2)
+	end
+end
+
 StaticPopupDialogs["RAIDINVITEMANAGER_SET_NOTE"] = {
 	text = "Set note",
 	button1 = ACCEPT,
@@ -306,6 +379,7 @@ function ns.CreateManagePage(parent)
 	local inviteButton = LibStub("tekKonfig-Button").new(parent, "BOTTOMLEFT", parent, "BOTTOM", 3, 5)
 	inviteButton:SetWidth(100)
 	inviteButton:SetText("Begin Invites")
+	inviteButton:SetScript("OnClick", Invite_OnClick)
 	
 	local clearButton = LibStub("tekKonfig-Button").new(parent, "BOTTOMRIGHT", parent, "BOTTOM", -3, 5)
 	clearButton:SetWidth(100)

@@ -14,11 +14,13 @@
 ## X-LoadOn-Always: delayed
 
 libs\LibStub.lua
+
+libs\AceTimer-3.0.lua
+libs\QScrollingEditBox.lua
 libs\tekKonfigAboutPanel.lua
 libs\tekKonfigButton.lua
 libs\tekKonfigScroll.lua
 libs\tekPanel.lua
-libs\QScrollingEditBox.lua
 
 Locale.lua
 Database.lua
