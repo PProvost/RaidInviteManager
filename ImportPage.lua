@@ -1,3 +1,20 @@
+--[[
+RaidInviteManager
+
+Copyright 2010 Quaiche
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+]]
 
 local myname, ns = ...
 
@@ -55,11 +72,13 @@ function ns.CreateImportPage(parent)
 			else
 				-- assume it is a name
 				local name = string.match(line, "%w+")
+				local selected = (role ~= "Standby") or nil
 				if name then
 					table.insert( ns.raidMembers, {
 						name = name,
 						role = role,
-						class = ns.GetUnitClassInfo(name) or "Unknown"
+						class = ns.GetUnitClassInfo(name) or "Unknown",
+						selected = selected,
 					})
 				end
 			end
@@ -67,7 +86,5 @@ function ns.CreateImportPage(parent)
 
 		ns.SetActivePage(1) -- Switch to the manage page after import
 	end)
-
-
 end
 
