@@ -28,4 +28,4 @@ ns.RegisterEvents, ns.UnregisterEvents = ns.RegisterEvent, ns.UnregisterEvent
 
 -- Hook in AceTimer for scheduling
 LibStub("AceTimer-3.0"):Embed(f)
-ns.ScheduleEvent = f.ScheduleEvent
+ns.ScheduleTimer = f.ScheduleTimer

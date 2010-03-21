@@ -67,8 +67,15 @@ local function GetSelectedRaidMembers()
 	return result
 end
 
+local function IsInRaid(name)
+	for i=1,GetNumRaidMembers() do
+		if GetRaidRosterInfo(i) == name then return true end
+	end
+end
+
 local function DoInviteUnit(name)
 	if UnitIsUnit(name, "player") then return end
+	if IsInRaid(name) then return end
 	if IsGuildMember(name) then
 		if IsGuildMemberOnline(name) then
 			InviteUnit(name)
