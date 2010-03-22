@@ -18,9 +18,6 @@ limitations under the License.
 
 local myname, ns = ...
 
-
-ns.defaults = {}
-
 -- TODO: Remove when done testing
 ns.raidMembers = {
 	[1] = { name="Quaiche", class="Druid", role="Tank", note="Has to leave at 7pm" },
@@ -35,12 +32,11 @@ ns.raidMembers = {
 	[10] = { name="Peine", class="Death Knight", role="Melee" },
 }
 
-function ns.InitDB()
-	_G[myname.."DB"] = setmetatable(_G[myname.."DB"] or {}, {__index = ns.defaults})
-	ns.db = _G[myname.."DB"]
+function ns:InitDB()
+	local db = RaidInviteManagerDB
+	if not db.minimap then
+		db.minimap = { hide = false }
+	end
+	ns.db = db
 end
 
-
-function ns.FlushDB()
-	for i,v in pairs(ns.defaults) do if ns.db[i] == v then ns.db[i] = nil end end
-end

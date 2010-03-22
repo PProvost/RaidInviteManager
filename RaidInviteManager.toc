@@ -1,6 +1,6 @@
 ## Interface: 30300
 
-## Title: Raid Invite Manager
+## Title: RaidInviteManager
 ## Notes: Fast and easy roster and invite management for guild or PUG raids
 ## Author: Quaiche of Dragonblight
 ## Version: $project-version$
@@ -16,9 +16,13 @@
 libs\LibStub.lua
 
 libs\AceTimer-3.0.lua
+libs\CallBackHandler-1.0.lua
+libs\LibDataBroker-1.1.lua
+libs\LibDBIcon-1.0.lua
 libs\QScrollingEditBox.lua
 libs\tekKonfigAboutPanel.lua
 libs\tekKonfigButton.lua
+libs\tekKonfigCheckbox.lua
 libs\tekKonfigScroll.lua
 libs\tekPanel.lua
 
@@ -27,6 +31,9 @@ Database.lua
 Slashcommand.lua
 UtilityFunctions.lua
 EventDispatcher.lua
+
+LibDataBrokerPlugin.lua
+MinimapIcon.lua
 
 ManagePage.lua
 ImportPage.lua

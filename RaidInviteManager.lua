@@ -21,7 +21,6 @@ local myname, ns = ...
 ns:RegisterEvent("ADDON_LOADED")
 function ns:ADDON_LOADED(event, addon)
 	if addon ~= myname then return end
-	self:InitDB()
 
 	LibStub("tekKonfig-AboutPanel").new(myfullname, myname) -- Make first arg nil if no parent config panel
 
@@ -35,7 +34,12 @@ end
 function ns:PLAYER_LOGIN()
 	self:RegisterEvent("PLAYER_LOGOUT")
 
-	-- Kick one off just in case nobody else did
+	-- Misc setup
+	self:InitDB()
+	self:InitLDBPlugin()
+	self:InitMinimapIcon()
+
+	-- Kick a roster load off just in case nobody else did
 	GuildRoster()
 
 	self:UnregisterEvent("PLAYER_LOGIN")

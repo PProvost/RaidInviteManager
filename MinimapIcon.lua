@@ -17,28 +17,10 @@ limitations under the License.
 ]]
 
 local myname, ns = ...
-local tekcheck = LibStub("tekKonfig-Checkbox")
-local icon = LibStub("LibDBIcon-1.0")
 
-local HGAP = 15
-local VGAP = 10
-
-function ns.CreateOptionsPage(parent)
-	local showMinimap = tekcheck.new(parent, nil, "Show Minimap", "TOPLEFT", HGAP, -VGAP)
-	showMinimap.tiptext = "Shows/hides the minimap icon"
-	local orig = showMinimap:GetScript("OnClick")
-	showMinimap:SetScript("OnClick", function(self) 
-		orig(self); 
-		ns.db.minimap.hide = not ns.db.minimap.hide
-		if ns.db.minimap.hide then
-			icon:Hide(myname)
-		else
-			icon:Show(myname)
-		end
-	end)
-	showMinimap:SetChecked(not ns.db.minimap.hide)
-
-
+function ns:InitMinimapIcon()
+	assert(ns.ldb)
+	assert(ns.db.minimap)
+	LibStub("LibDBIcon-1.0"):Register(myname, ns.ldb, ns.db.minimap)
 end
-
 

@@ -17,28 +17,15 @@ limitations under the License.
 ]]
 
 local myname, ns = ...
-local tekcheck = LibStub("tekKonfig-Checkbox")
-local icon = LibStub("LibDBIcon-1.0")
 
-local HGAP = 15
-local VGAP = 10
+function ns:InitLDBPlugin()
+	local ldb = LibStub("LibDataBroker-1.1"):NewDataObject(myname, {
+		type = "launcher",
+		icon = "Interface\\Addons\\"..myname.."\\Icon",
+		OnClick = function(clickedFrame, button)
+			ns.ToggleMainFrame()
+		end,
+	})
 
-function ns.CreateOptionsPage(parent)
-	local showMinimap = tekcheck.new(parent, nil, "Show Minimap", "TOPLEFT", HGAP, -VGAP)
-	showMinimap.tiptext = "Shows/hides the minimap icon"
-	local orig = showMinimap:GetScript("OnClick")
-	showMinimap:SetScript("OnClick", function(self) 
-		orig(self); 
-		ns.db.minimap.hide = not ns.db.minimap.hide
-		if ns.db.minimap.hide then
-			icon:Hide(myname)
-		else
-			icon:Show(myname)
-		end
-	end)
-	showMinimap:SetChecked(not ns.db.minimap.hide)
-
-
+	ns.ldb = ldb
 end
-
-
