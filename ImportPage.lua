@@ -59,7 +59,7 @@ function ns.CreateImportPage(parent)
 	local importButton = LibStub("tekKonfig-Button").new(parent, "BOTTOMRIGHT", -5, 5)
 	importButton:SetText("Import")
 	importButton:SetScript("OnClick", function()
-		ns.raidMembers = {}
+		ns:RemoveAllRaidMembers()
 		local text = scrollEdit:GetText()
 		local lines = { string.split("\n", text) }
 		local role = "Standby"
@@ -74,12 +74,7 @@ function ns.CreateImportPage(parent)
 				local name = string.match(line, "%w+")
 				local selected = (role ~= "Standby") or nil
 				if name then
-					table.insert( ns.raidMembers, {
-						name = name,
-						role = role,
-						class = ns.GetUnitClassInfo(name) or "Unknown",
-						selected = selected,
-					})
+					ns:AddRaidMember(name, role, ns:GetUnitClassInfo(name) or "Unknown", selected)
 				end
 			end
 		end

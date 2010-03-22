@@ -18,24 +18,66 @@ limitations under the License.
 
 local myname, ns = ...
 
--- TODO: Remove when done testing
-ns.raidMembers = {
-	[1] = { name="Quaiche", class="Druid", role="Tank", note="Has to leave at 7pm" },
-	[2] = { name="Dankish", class="Hunter", role="Ranged" },
-	[3] = { name="Hydrogenbomb", class="Shaman", role="Ranged" },
-	[4] = { name="Uethar", class="Paladin", role="Healer", note="Also has a rogue" },
-	[5] = { name="Vayda", class="Priest", role="Healer" },
-	[6] = { name="Airitus", class="Warrior", role="Tank" },
-	[7] = { name="Deeoogee", class="Rogue", role="Melee" },
-	[8] = { name="Horric", class="Mage", role="Ranged" },
-	[9] = { name="Grundy", class="Warlock", role="Ranged" },
-	[10] = { name="Peine", class="Death Knight", role="Melee" },
-}
+local raidMembers = {}
+
+function ns:GetSelectedRaidMembers()
+	local result = {}
+	for i=1,#(raidMembers) do
+		if raidMembers[i].selected then
+			table.insert(result, raidMembers[i].name)
+		end
+	end
+	return result
+end
+
+function ns:GetRaidMemberByIndex(index)
+	return raidMembers[index]
+end
+
+function ns:GetRaidMember(name)
+	for i = 1,#raidMembers do
+		if raidMembers[i].name:lower() == name:lower() then
+			return raidMembers[i], i
+		end
+	end
+end
+
+function ns:AddRaidMember(name, role, class, note)
+	local entry = ns:GetRaidMember(name)
+	if not entry then 
+		entry = {} 
+		table.insert(raidMembers, entry)
+	end
+
+	entry.name = name
+	entry.role = role
+	entry.class = class
+	entry.note = note
+
+	ns:RefreshList()
+end
+
+function ns:RemoveRaidMemberByIndex(index)
+	table.remove(index)
+	ns:RefreshList()
+end
+
+function ns:RemoveAllRaidMembers()
+	raidMembers = {}
+	ns:RefreshList()
+end
+
+function ns:RemoveRaidMember(name)
+	local entry, index = GetRaidMember(name)
+	if entry then
+		ns:RemoveRaidMemberByIndex(index)
+	end
+end
 
 function ns:InitDB()
 	local db = RaidInviteManagerDB
 	if not db.minimap then
-		db.minimap = { hide = false }
+		db.minimap = { hide = true }
 	end
 	ns.db = db
 end

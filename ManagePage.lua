@@ -33,11 +33,21 @@ local CONTEXT_MENU_MODE_ROLE = "Role"
 local CONTEXT_MENU_MODE_CLASS = "Class"
 
 local function SetRaidMemberNote(note)
-	ns.raidMembers[contextMenu.index].note = note
+	local entry = ns:GetRaidMemberByIndex(contextMenu.index)
+	if entry then
+		entry.note = note
+	end
 end
 
 local function RefreshList()
 	OnValueChanged(scrollBar, 0)
+end
+
+-- TODO: Hack
+function ns:RefreshList()
+	if not firstShow then
+		RefreshList()
+	end
 end
 
 local function IsGuildMember(name)
@@ -55,16 +65,6 @@ local function IsGuildMemberOnline(name)
          return 1
       end
    end
-end
-
-local function GetSelectedRaidMembers()
-	local result = {}
-	for i=1,#(ns.raidMembers) do
-		if ns.raidMembers[i].selected then
-			table.insert(result, ns.raidMembers[i].name)
-		end
-	end
-	return result
 end
 
 local function IsInRaid(name)
@@ -89,7 +89,7 @@ local function DoInviteUnit(name)
 end
 
 local function Invite_OnClick()
-	local approved = GetSelectedRaidMembers()
+	local approved = ns:GetSelectedRaidMembers()
 	if not UnitInRaid("player") then
 		if GetNumPartyMembers() == 0 then
 			ns:RegisterEvent("PARTY_MEMBERS_CHANGED")
@@ -131,7 +131,7 @@ StaticPopupDialogs["RAIDINVITEMANAGER_SET_NOTE"] = {
 		SetRaidMemberNote(self.wideEditBox:GetText());
 	end,
 	OnShow = function(self)
-		local note = ns.raidMembers[contextMenu.index].note
+		local note = ns:GetRaidMemberByIndex(contextMenu.index).note
 		if ( note ) then
 			self.wideEditBox:SetText(note);
 		end
@@ -165,7 +165,8 @@ local function menuCallback(frame, level)
 			info.text = roles[i]
 			info.notCheckable = 1
 			info.func = function() 
-				ns.raidMembers[contextMenu.index].role = roles[i] 
+				local entry = GetRaidMemberByIndex(contextMenu.index)
+				if entry then entry.role = roles[i] end
 				RefreshList()
 			end
 			UIDropDownMenu_AddButton(info)
@@ -178,7 +179,8 @@ local function menuCallback(frame, level)
 			info.text = classes[i]
 			info.notCheckable = 1
 			info.func = function()
-				ns.raidMembers[contextMenu.index].class = classes[i]
+				local entry = GetRaidMemberByIndex(contextMenu.index)
+				if entry then entry.class = classes[i] end
 				RefreshList()
 			end
 			UIDropDownMenu_AddButton(info)
@@ -214,7 +216,7 @@ local function menuCallback(frame, level)
 	info.text = "Delete"
 	info.notCheckable = 1
 	info.func = function()
-		table.remove(ns.raidMembers, contextMenu.index)
+		RemoveRaidMemberByIndex(contextMenu.index)
 		RefreshList()
 	end
 	UIDropDownMenu_AddButton(info)
@@ -235,8 +237,9 @@ local function InitializeContextMenu(parent)
 end
 
 local function GetRaidListEntry(index)
-	if ns.raidMembers[index] then
-		return ns.raidMembers[index].name, ns.raidMembers[index].class, ns.raidMembers[index].role, ns.raidMembers[index].note, (ns.raidMembers[index].selected==true)
+	local entry = ns:GetRaidMemberByIndex(index)
+	if entry then
+		return entry.name, entry.class, entry.role, entry.note, (entry.selected==true)
 	else
 		return nil, nil, nil, nil, false
 	end
@@ -252,7 +255,7 @@ function OnValueChanged(self, offset, ...)
 
 		if name then
 			-- got one
-			local class, classFilename = ns.GetUnitClassInfo(name)
+			local class, classFilename = ns:GetUnitClassInfo(name)
 			local color = { r=0.75, g=0.75, b=0.75 }
 			if class then color = RAID_CLASS_COLORS[classFilename] or { r=0.75, g=0.75, b=0.75 } end 
 			row.name:SetText(name); row.name:SetTextColor(color.r, color.g, color.b)
@@ -321,12 +324,15 @@ function ns.CreateManagePage(parent)
 				-- checkmark
 				local idx = self.index
 				if idx then
-					if self:GetChecked() then
-						ns.raidMembers[idx].selected = true
-						self.check:Show()
-					else
-						ns.raidMembers[idx].selected = nil
-						self.check:Hide()
+					local entry = ns:GetRaidMemberByIndex(idx)
+					if entry then
+						if self:GetChecked() then
+							entry.selected = true
+							self.check:Show()
+						else
+							entry.selected = nil
+							self.check:Hide()
+						end
 					end
 				end
 
@@ -381,13 +387,7 @@ function ns.CreateManagePage(parent)
 
 	local addName = function()
 		local name = editBox:GetText()
-		local t = {
-			name = name,
-			class = ns.GetUnitClassInfo(name) or "Unknown",
-			role = ns.GetRole(name) or "Standby",
-		}
-		table.insert(ns.raidMembers, t)
-		RefreshList()
+		ns:AddRaidMember(name, ns:GetUnitClassInfo(name) or "Unknown", "Standby")
 		editBox:SetText("")
 	end
 
@@ -410,8 +410,7 @@ function ns.CreateManagePage(parent)
 	clearButton:SetWidth(100)
 	clearButton:SetText("Clear")
 	clearButton:SetScript("OnClick", function()
-		ns.raidMembers = {}
-		RefreshList()
+		ns:RemoveAllRaidMembers()
 	end)
 
 

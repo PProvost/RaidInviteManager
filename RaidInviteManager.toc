@@ -31,6 +31,7 @@ Database.lua
 Slashcommand.lua
 UtilityFunctions.lua
 EventDispatcher.lua
+WhisperHandler.lua
 
 LibDataBrokerPlugin.lua
 MinimapIcon.lua

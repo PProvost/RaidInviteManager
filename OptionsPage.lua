@@ -38,7 +38,13 @@ function ns.CreateOptionsPage(parent)
 	end)
 	showMinimap:SetChecked(not ns.db.minimap.hide)
 
-
+	local enableWhisperAdd = tekcheck.new(parent, nil, "Enable Whisper Add", "TOPLEFT", showMinimap, "BOTTOMLEFT", 0, -VGAP)
+	enableWhisperAdd.tiptext = "Enables people to whisper you \"!add\" (followed optionally by a role) to be added to the current roster."
+	orig = enableWhisperAdd:GetScript("OnClick")
+	enableWhisperAdd:SetScript("OnClick", function(self)
+		ns.db.enableWhisperAdd = not ns.db.enableWhisperAdd
+	end)
+	enableWhisperAdd:SetChecked(ns.db.enableWhisperAdd)
 end
 
 
