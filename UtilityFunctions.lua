@@ -39,7 +39,7 @@ function ns:GetUnitClassInfo(unitName)
 end
 
 function ns:GetRole(name)
-	local class, classFilename = ns.GetUnitClassInfo(name)
+	local class, classFilename = ns:GetUnitClassInfo(name)
 	if classFilename == "ROGUE" then return "Melee" end
 	if classFilename=="WARLOCK" or classFilename=="MAGE" or classFilename=="HUNTER" then return "Ranged" end
 end

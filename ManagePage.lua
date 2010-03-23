@@ -80,10 +80,10 @@ local function DoInviteUnit(name)
 		if IsGuildMemberOnline(name) then
 			InviteUnit(name)
 		else
-			ns.Print("Not online "..name)
+			ns:Print("Not online "..name)
 		end
 	else
-		ns.Print("Inviting "..name.." (non guild)")
+		ns:Print("Inviting "..name.." (non guild)")
 		InviteUnit(name)
 	end
 end
@@ -100,7 +100,7 @@ local function Invite_OnClick()
 			return
 		else
 			ConvertToRaid()
-			ns.ScheduleTimer(Invite_OnClick, 2)
+			ns:ScheduleTimer(Invite_OnClick, 2)
 			return
 		end
 	end
@@ -236,34 +236,25 @@ local function InitializeContextMenu(parent)
 	UIDropDownMenu_Initialize(contextMenu, menuCallback, "MENU")
 end
 
-local function GetRaidListEntry(index)
-	local entry = ns:GetRaidMemberByIndex(index)
-	if entry then
-		return entry.name, entry.class, entry.role, entry.note, (entry.selected==true)
-	else
-		return nil, nil, nil, nil, false
-	end
-end
-
 local orig_OnValueChanged
 function OnValueChanged(self, offset, ...)
 	offset = math.floor(offset)
 
 	for i,row in ipairs(rows) do
 		local index = offset + i
-		local name, class, role, note, selected = GetRaidListEntry(index)
+		local entry = ns:GetRaidMemberByIndex(index)
 
-		if name then
+		if entry then
 			-- got one
-			local class, classFilename = ns:GetUnitClassInfo(name)
+			local class, classFilename = ns:GetUnitClassInfo(entry.name)
 			local color = { r=0.75, g=0.75, b=0.75 }
 			if class then color = RAID_CLASS_COLORS[classFilename] or { r=0.75, g=0.75, b=0.75 } end 
-			row.name:SetText(name); row.name:SetTextColor(color.r, color.g, color.b)
-			row.class:SetText(class); row.class:SetTextColor(color.r, color.g, color.b)
-			row.role:SetText(role); row.role:SetTextColor(color.r, color.g, color.b)
-			row.note = note
+			row.name:SetText(entry.name); row.name:SetTextColor(color.r, color.g, color.b)
+			row.class:SetText(entry.class); row.class:SetTextColor(color.r, color.g, color.b)
+			row.role:SetText(entry.role); row.role:SetTextColor(color.r, color.g, color.b)
+			row.note = entry.note
 			row.index = index
-			row:SetChecked(selected)
+			row:SetChecked(entry.selected)
 			if selected then row.check:Show() else row.check:Hide() end
 			row:Show()
 
@@ -281,7 +272,7 @@ function OnValueChanged(self, offset, ...)
 	end
 end
 
-function ns.CreateManagePage(parent)
+function ns:CreateManagePage(parent)
 	local scrollbox = CreateFrame("Frame", nil, parent)
 	scrollbox:SetPoint("TOPLEFT", -14, -6)
 	scrollbox:SetPoint("BOTTOMRIGHT", -5, 65)

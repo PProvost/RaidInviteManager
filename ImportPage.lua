@@ -28,7 +28,7 @@ local roles = setmetatable({
 	["HEALERS"] = "Healer",
 }, { __index = function(t,k) return rawget(t,k) or "Standby" end })
 
-function ns.CreateImportPage(parent)
+function ns:CreateImportPage(parent)
 	local instructionsText = parent:CreateFontString()
 	instructionsText:SetFontObject(GameFontNormalSmall)
 	instructionsText:SetJustifyH("LEFT")
@@ -79,7 +79,7 @@ function ns.CreateImportPage(parent)
 			end
 		end
 
-		ns.SetActivePage(1) -- Switch to the manage page after import
+		ns:SetActivePage(1) -- Switch to the manage page after import
 	end)
 end
 

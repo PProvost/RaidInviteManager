@@ -23,7 +23,7 @@ function ns:InitLDBPlugin()
 		type = "launcher",
 		icon = "Interface\\Addons\\"..myname.."\\Icon",
 		OnClick = function(clickedFrame, button)
-			ns.ToggleMainFrame()
+			ns:ToggleMainFrame()
 		end,
 	})
 

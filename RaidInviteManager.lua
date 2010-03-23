@@ -38,6 +38,7 @@ function ns:PLAYER_LOGIN()
 	self:InitDB()
 	self:InitLDBPlugin()
 	self:InitMinimapIcon()
+	self:AddPlayer()
 
 	-- Kick a roster load off just in case nobody else did
 	GuildRoster()

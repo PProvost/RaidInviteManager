@@ -18,67 +18,17 @@ limitations under the License.
 
 local myname, ns = ...
 
-local raidMembers = {}
-
-function ns:GetSelectedRaidMembers()
-	local result = {}
-	for i=1,#(raidMembers) do
-		if raidMembers[i].selected then
-			table.insert(result, raidMembers[i].name)
-		end
-	end
-	return result
-end
-
-function ns:GetRaidMemberByIndex(index)
-	return raidMembers[index]
-end
-
-function ns:GetRaidMember(name)
-	for i = 1,#raidMembers do
-		if raidMembers[i].name:lower() == name:lower() then
-			return raidMembers[i], i
-		end
-	end
-end
-
-function ns:AddRaidMember(name, role, class, note)
-	local entry = ns:GetRaidMember(name)
-	if not entry then 
-		entry = {} 
-		table.insert(raidMembers, entry)
-	end
-
-	entry.name = name
-	entry.role = role
-	entry.class = class
-	entry.note = note
-
-	ns:RefreshList()
-end
-
-function ns:RemoveRaidMemberByIndex(index)
-	table.remove(index)
-	ns:RefreshList()
-end
-
-function ns:RemoveAllRaidMembers()
-	raidMembers = {}
-	ns:RefreshList()
-end
-
-function ns:RemoveRaidMember(name)
-	local entry, index = GetRaidMember(name)
-	if entry then
-		ns:RemoveRaidMemberByIndex(index)
-	end
-end
+ns.defaults = {}
 
 function ns:InitDB()
-	local db = RaidInviteManagerDB
-	if not db.minimap then
-		db.minimap = { hide = true }
-	end
-	ns.db = db
+	RaidInviteManagerDB = setmetatable(RaidInviteManagerDB or {}, {__index = ns.defaults})
+
+	-- Dumbness from nested table that LibDBIcon uses
+	if not RaidInviteManagerDB.minimap then RaidInviteManagerDB.minimap = {} end
+
+	ns.db = RaidInviteManagerDB
 end
 
+function ns:FlushDB()
+	for i,v in pairs(ns.defaults) do if ns.db[i] == v then ns.db[i] = nil end end
+end

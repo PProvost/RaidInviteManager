@@ -26,19 +26,24 @@ libs\tekKonfigCheckbox.lua
 libs\tekKonfigScroll.lua
 libs\tekPanel.lua
 
+# Support stuff
 Locale.lua
 Database.lua
 Slashcommand.lua
 UtilityFunctions.lua
 EventDispatcher.lua
 WhisperHandler.lua
+RaidMemberList.lua
 
+# Minimap and LDB
 LibDataBrokerPlugin.lua
 MinimapIcon.lua
 
+# UI
 ManagePage.lua
 ImportPage.lua
 OptionsPage.lua
 MainFrame.lua
 
+# Addon main frame and startup code
 RaidInviteManager.lua

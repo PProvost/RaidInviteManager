@@ -23,7 +23,7 @@ local icon = LibStub("LibDBIcon-1.0")
 local HGAP = 15
 local VGAP = 10
 
-function ns.CreateOptionsPage(parent)
+function ns:CreateOptionsPage(parent)
 	local showMinimap = tekcheck.new(parent, nil, "Show Minimap", "TOPLEFT", HGAP, -VGAP)
 	showMinimap.tiptext = "Shows/hides the minimap icon"
 	local orig = showMinimap:GetScript("OnClick")
