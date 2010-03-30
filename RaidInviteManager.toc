@@ -32,7 +32,7 @@ Database.lua
 Slashcommand.lua
 UtilityFunctions.lua
 EventDispatcher.lua
-WhisperHandler.lua
+# WhisperHandler.lua
 RaidMemberList.lua
 
 # Minimap and LDB
