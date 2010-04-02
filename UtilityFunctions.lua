@@ -25,23 +25,29 @@ local debugf = tekDebug and tekDebug:GetFrame(myname)
 function ns:Debug(...) if debugf then debugf:AddMessage(string.join(", ", tostringall(...))) end end
 
 function ns:GetUnitClassInfo(unitName)
-	local class, classFilename = select(2,UnitClass(unitName))
-	if class == nil then
+	local name, online
+	local class, classFilename = UnitClass(unitName)
+	if classFilename == nil then
 		for i = 1,GetNumGuildMembers(true) do
-			local name, _, _, level, _class, _, _, _, online, _, _classFileName = GetGuildRosterInfo(i)
+			name, _, _, _, class, _, _, _, online, _, classFileName = GetGuildRosterInfo(i)
 			if name == unitName then
-				class = _class
-				classFilename = _classFileName
+				return class, classFilenam
 			end
 		end
 	end
-	return class, classFilename
 end
 
-function ns:GetRole(name)
-	local class, classFilename = ns:GetUnitClassInfo(name)
-	if classFilename == "ROGUE" then return "Melee" end
-	if classFilename=="WARLOCK" or classFilename=="MAGE" or classFilename=="HUNTER" then return "Ranged" end
+function ns:GetClassRole(class)
+	if class == "ROGUE" then return ns.ROLES["MELEE"] end
+	if class=="WARLOCK" or class=="MAGE" or class=="HUNTER" then return ns.ROLES["RANGED"] end
+	return ns.ROLES["Unknown"]
 end
 
-
+function ns:GetRoleKey(roleName)
+	if strlower(roleName)=="tank" or strlower(roleName)=="tanks" then return "TANK" end
+	if strlower(roleName)=="healer" or strlower(roleName)=="healers" then return "HEALER" end
+	if strlower(roleName)=="melee" then return "MELEE" end
+	if strlower(roleName)=="ranged" or strlower(roleName)=="caster" or strlower(roleName)=="casters" then return "RANGED" end
+	if strlower(roleName)=="standby" or strlower(roleName)=="waitlist" then return "STANDBY" end
+	return "UNKNOWN"
+end

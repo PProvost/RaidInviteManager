@@ -24,8 +24,8 @@ local OnValueChanged
 local firstshow = true
 
 local rows = {}
-local NUMROWS = 22
-local SCROLLSTEP = math.floor(NUMROWS/4)
+local NUMROWS = 18
+local SCROLLSTEP = 2 -- math.floor(NUMROWS/4)
 
 local contextMenu
 local CONTEXT_MENU_MODE_NAME = "Name"
@@ -40,7 +40,11 @@ local function SetRaidMemberNote(note)
 end
 
 local function RefreshList()
-	OnValueChanged(scrollBar, 0)
+	if scrollBar then
+		local num = ns:GetNumRaidMembers()
+		scrollBar:SetMinMaxValues(0, math.max(0, num))
+		OnValueChanged(scrollBar, 0)
+	end
 end
 
 -- TODO: Hack
@@ -156,17 +160,15 @@ StaticPopupDialogs["RAIDINVITEMANAGER_SET_NOTE"] = {
 
 local function menuCallback(frame, level)
 	local info
-	local roles = { "Tank", "Healer", "Melee", "Ranged", "Standby" }
-	local classes = CLASS_SORT_ORDER -- from FrameXML/Constants.lua
 
 	if contextMenu.mode == CONTEXT_MENU_MODE_ROLE  then
-		for i=1,#roles do
+		for key,roleName in pairs(ns.ROLES) do
 			info = UIDropDownMenu_CreateInfo()
-			info.text = roles[i]
+			info.text = roleName
 			info.notCheckable = 1
 			info.func = function() 
 				local entry = GetRaidMemberByIndex(contextMenu.index)
-				if entry then entry.role = roles[i] end
+				if entry then entry.role = roleName end
 				RefreshList()
 			end
 			UIDropDownMenu_AddButton(info)
@@ -174,13 +176,13 @@ local function menuCallback(frame, level)
 	end
 
 	if contextMenu.mode == CONTEXT_MENU_MODE_CLASS then
-		for i = 1,#classes do
+		for key,className in pairs(ns.CLASSES) do
 			info = UIDropDownMenu_CreateInfo()
-			info.text = classes[i]
+			info.text = className
 			info.notCheckable = 1
 			info.func = function()
 				local entry = GetRaidMemberByIndex(contextMenu.index)
-				if entry then entry.class = classes[i] end
+				if entry then entry.class = className end
 				RefreshList()
 			end
 			UIDropDownMenu_AddButton(info)
@@ -255,7 +257,7 @@ function OnValueChanged(self, offset, ...)
 			row.note = entry.note
 			row.index = index
 			row:SetChecked(entry.selected)
-			if selected then row.check:Show() else row.check:Hide() end
+			if entry.selected then row.check:Show() else row.check:Hide() end
 			row:Show()
 
 		else
@@ -270,6 +272,7 @@ function OnValueChanged(self, offset, ...)
 			row:Hide()
 		end
 	end
+	if orig_OnValueChanged then orig_OnValueChanged(self, offset, ...) end
 end
 
 function ns:CreateManagePage(parent)
@@ -345,9 +348,10 @@ function ns:CreateManagePage(parent)
 
 		butt:SetScript("OnLeave", function() GameTooltip:Hide() end)
 		butt:SetScript("OnEnter", function(self)
-			if self.note and self.note ~= " " then
+			if self.note and (self.note ~= " ") then
+				ns:Debug("Note", self.note)
 				GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
-				GameTooltip:SetText(self.note)
+				GameTooltip:SetText(tostring(self.note))
 			end
 		end)
 
@@ -359,7 +363,8 @@ function ns:CreateManagePage(parent)
 	scrollBar:SetScript("OnValueChanged", OnValueChanged)
 
 	parent:SetScript("OnShow", function(self)
-		scrollBar:SetMinMaxValues(0, math.max(0, i))
+		local num = ns:GetNumRaidMembers()
+		scrollBar:SetMinMaxValues(0, math.max(0, num))
 		if firstshow then scrollBar:SetValue(0); firstshow = nil end
 	end)
 
@@ -378,7 +383,7 @@ function ns:CreateManagePage(parent)
 
 	local addName = function()
 		local name = editBox:GetText()
-		ns:AddRaidMember(name, ns:GetUnitClassInfo(name) or "Unknown", "Standby")
+		ns:AddRaidMember(name)
 		editBox:SetText("")
 	end
 
