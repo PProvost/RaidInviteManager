@@ -167,7 +167,7 @@ local function menuCallback(frame, level)
 			info.text = roleName
 			info.notCheckable = 1
 			info.func = function() 
-				local entry = GetRaidMemberByIndex(contextMenu.index)
+				local entry = ns:GetRaidMemberByIndex(contextMenu.index)
 				if entry then entry.role = roleName end
 				RefreshList()
 			end
@@ -181,7 +181,7 @@ local function menuCallback(frame, level)
 			info.text = className
 			info.notCheckable = 1
 			info.func = function()
-				local entry = GetRaidMemberByIndex(contextMenu.index)
+				local entry = ns:GetRaidMemberByIndex(contextMenu.index)
 				if entry then entry.class = className end
 				RefreshList()
 			end
@@ -218,7 +218,7 @@ local function menuCallback(frame, level)
 	info.text = "Delete"
 	info.notCheckable = 1
 	info.func = function()
-		RemoveRaidMemberByIndex(contextMenu.index)
+		ns:RemoveRaidMemberByIndex(contextMenu.index)
 		RefreshList()
 	end
 	UIDropDownMenu_AddButton(info)
