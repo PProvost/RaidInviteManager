@@ -24,14 +24,24 @@ function ns:Print(...) print("|cFF33FF99".. myfullname.. "|r:", string.join(", "
 local debugf = tekDebug and tekDebug:GetFrame(myname)
 function ns:Debug(...) if debugf then debugf:AddMessage(string.join(", ", tostringall(...))) end end
 
-function ns:GetUnitClassInfo(unitName)
-	local name, online
-	local class, classFilename = UnitClass(unitName)
-	if classFilename == nil then
+function ns:GetUnitClassInfo(unitOrName)
+	local name
+	-- Hopefully this will work but not always
+	local class, classFilename = UnitClass(unitOrName)
+	if classFilename then
+		return classFilename
+	else
+		-- Maybe we can get the GUID
+		local guid = UnitGUID(unitOrName)
+		if guid then
+			return select(2, GetPlayerInfoByGUID(guid))
+		end
+
+		-- Try Guild roster next
 		for i = 1,GetNumGuildMembers(true) do
-			name, _, _, _, class, _, _, _, online, _, classFileName = GetGuildRosterInfo(i)
-			if name == unitName then
-				return class, classFilenam
+			name, _, _, _, _, _, _, _, _, _, classFileName = GetGuildRosterInfo(i)
+			if name == unitOrName then
+				return classFileName
 			end
 		end
 	end

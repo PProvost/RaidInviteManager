@@ -26,21 +26,23 @@ local function IsValidRole(role)
 	return (role=="tank") or (role=="healer") or (role=="melee") or (role=="ranged") or (role=="standby")
 end
 
-function ns:CHAT_MSG_WHISPER(event, message, sender)
+function ns:CHAT_MSG_WHISPER(event, message, sender, language, channelString, target, flags, unknown, channelNumber, channelName, unknown, counter, guid)
 	-- ns:Print(event, message, sender)
 	if not ns.db.enableWhisperAdd then return end
 	if sender == UnitName("player") then return end
 	if string.sub(message:lower(), 1, string.len(keyword)) ~= keyword then return end
+
+	local class, classFilename, race, raceFilename, sex = GetPlayerInfoByGUID(guid)
 
 	local role = string.match(message:lower(), pattern:lower())
 	if (role == nil or role == "") then role = "Standby" end
 	if IsValidRole(role) then
 		local entry = ns:GetRaidMember(sender)
 		if entry then
-			ns:AddRaidMember(sender, role)
+			ns:AddRaidMember(sender, role, classFilename)
 			SendChatMessage("RaidInviteManager: You are already listed in the manager. Your information has been updated", "WHISPER", nil, sender)
 		else
-			ns:AddRaidMember(sender, role, ns:GetUnitClassInfo(sender) or "Unknown", "Whispered at "..date("%I:%M:%S %p") )
+			ns:AddRaidMember(sender, role, classFilename, "Whispered at "..date("%I:%M:%S %p") )
 			SendChatMessage("RaidInviteManager: You have been added.", "WHISPER", nil, sender)
 		end
 	end

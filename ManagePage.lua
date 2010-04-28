@@ -248,9 +248,9 @@ function OnValueChanged(self, offset, ...)
 
 		if entry then
 			-- got one
-			local class, classFilename = ns:GetUnitClassInfo(entry.name)
+			local classFilename = ns:GetUnitClassInfo(entry.name)
 			local color = { r=0.75, g=0.75, b=0.75 }
-			if class then color = RAID_CLASS_COLORS[classFilename] or { r=0.75, g=0.75, b=0.75 } end 
+			if classFilename then color = RAID_CLASS_COLORS[classFilename] or { r=0.75, g=0.75, b=0.75 } end 
 			row.name:SetText(entry.name); row.name:SetTextColor(color.r, color.g, color.b)
 			row.class:SetText(entry.class); row.class:SetTextColor(color.r, color.g, color.b)
 			row.role:SetText(entry.role); row.role:SetTextColor(color.r, color.g, color.b)

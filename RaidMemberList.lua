@@ -46,7 +46,7 @@ function ns:AddRaidMember(name, role, class, note, selected)
 	assert(name ~= nil)
 	if role == nil then role = ns.ROLES["STANDBY"] end
 	if class == nil then
-		class = ns.CLASSES[ select(2, ns:GetUnitClassInfo(name)) ]
+		class = ns:GetUnitClassInfo(name)
 	end
 
 	local entry = ns:GetRaidMember(name)
@@ -57,7 +57,7 @@ function ns:AddRaidMember(name, role, class, note, selected)
 
 	entry.name = name
 	entry.role = role
-	entry.class = class
+	entry.class = ns.CLASSES[class] or class
 	entry.note = note
 	entry.selected = selected
 
@@ -65,7 +65,7 @@ function ns:AddRaidMember(name, role, class, note, selected)
 end
 
 function ns:RemoveRaidMemberByIndex(index)
-	table.remove(index)
+	table.remove(raidMembers, index)
 	ns:RefreshList()
 end
 
