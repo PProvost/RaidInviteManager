@@ -27,7 +27,6 @@ local function IsValidRole(role)
 end
 
 function ns:CHAT_MSG_WHISPER(event, message, sender, language, channelString, target, flags, unknown, channelNumber, channelName, unknown, counter, guid)
-	-- ns:Print(event, message, sender)
 	if not ns.db.enableWhisperAdd then return end
 	if sender == UnitName("player") then return end
 	if string.sub(message:lower(), 1, string.len(keyword)) ~= keyword then return end
